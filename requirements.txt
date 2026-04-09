@@ -1,0 +1,7 @@
+streamlit
+pdfplumber
+faiss-cpu
+sentence-transformers
+langchain-groq
+python-dotenv
+matplotlib

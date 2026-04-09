@@ -1,0 +1,34 @@
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Ignore data files
+data/data/
+
+# Ignore other unnecessary files
+*.npy
+*.index
+
+# Ignore environment files
+.env
+*.venv
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Pre-built index (regenerated via build_index.py)
+data/faiss.index
+data/embeddings.npy
+
+# IDE
+.vscode/
+.idea/
