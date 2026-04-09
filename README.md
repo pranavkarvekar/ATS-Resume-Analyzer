@@ -75,6 +75,28 @@ streamlit run app.py
     └── embeddings.npy   # Pre-computed embeddings (generated)
 ```
 
+## Troubleshooting
+
+### Issue: ScriptRunContext warnings or "Session state does not function"
+
+**Problem:** If you see warnings like:
+```
+Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+Session state does not function when running a script without `streamlit run`
+```
+
+**Solution:** You're running the app directly with Python. **Always use:**
+```bash
+streamlit run app.py
+```
+
+**❌ DO NOT run:**
+```bash
+python app.py        # This will cause the warnings above
+```
+
+Streamlit requires its own runtime environment, which is only available when launched via the `streamlit` command.
+
 ## License
 
 MIT

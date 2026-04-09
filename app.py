@@ -1,5 +1,6 @@
 import re
 import os
+import sys
 import numpy as np
 import pandas as pd
 import faiss
@@ -14,6 +15,20 @@ from sentence_transformers import SentenceTransformer
 from langchain_groq import ChatGroq
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+
+# ──────────────────────────────────────────────────────────
+#  STREAMLIT GUARD - Prevent running with `python app.py`
+# ──────────────────────────────────────────────────────────
+if not hasattr(st, '_is_running_with_streamlit'):
+    # Check if running under Streamlit by looking for Streamlit's internal marker
+    if 'streamlit' not in sys.modules or not hasattr(st, 'session_state'):
+        print("\n" + "="*70)
+        print("❌ ERROR: This app must be run with Streamlit, not directly with Python!")
+        print("="*70)
+        print("\n🚀 CORRECT WAY TO RUN:\n")
+        print("   streamlit run app.py\n")
+        print("="*70 + "\n")
+        sys.exit(1)
 
 # ──────────────────────────────────────────────────────────
 #  PAGE CONFIG  (must be the very first Streamlit call)
