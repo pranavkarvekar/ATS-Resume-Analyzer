@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATS Resume Analyzer — AI-Powered Career Tool</title>
+  <meta name="description" content="AI-powered ATS Resume Analyzer built with LangChain & LLaMA 3.3. Analyze, optimize, and score resumes against job descriptions. Features keyword analytics, job fit scoring, and ATS-friendly design suggestions." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+</head>
+<body>
+
+  <!-- Animated Background Orbs -->
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+  <!-- Layout -->
+  <div class="layout">
+
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">📊</div>
+        <div class="brand-name">ATS Analyzer</div>
+        <div class="brand-sub">Powered by Llama 3.3 + RAG</div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">How to Use</div>
+        <ol class="how-to-list">
+          <li>Paste your <strong>Job Description</strong></li>
+          <li>Upload your <strong>Resume (PDF)</strong></li>
+          <li>Choose an analysis tab</li>
+          <li>Click the action button</li>
+        </ol>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Features</div>
+        <div class="feature-list">
+          <div class="feature-item" data-tab="review">🔍 <span>Resume Review</span></div>
+          <div class="feature-item" data-tab="optimize">🚀 <span>Optimization Tips</span></div>
+          <div class="feature-item" data-tab="score">📈 <span>ATS Score (RAG)</span></div>
+          <div class="feature-item" data-tab="fit">🤝 <span>Job Fit Score</span></div>
+          <div class="feature-item" data-tab="keywords">📊 <span>Keyword Coverage</span></div>
+          <div class="feature-item" data-tab="design">🎨 <span>Design Suggestions</span></div>
+          <div class="feature-item" data-tab="translate">🌍 <span>Multilingual Resume</span></div>
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="rag-status-card" id="rag-status">
+        <div class="rag-label">RAG Pipeline</div>
+        <div class="rag-value checking" id="rag-value">Checking…</div>
+      </div>
+    </aside>
+
+    <!-- ── Main Content ── -->
+    <main class="main" id="main-content">
+
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero-content">
+          <h1 class="hero-title">📄 ATS Resume Analyzer</h1>
+          <p class="hero-sub">AI-powered resume evaluation with RAG indexing &amp; Llama 3.3 · Get scored, optimized &amp; hire-ready</p>
+        </div>
+      </div>
+
+      <!-- Input Grid -->
+      <div class="input-grid">
+
+        <!-- Job Description -->
+        <div class="card">
+          <div class="section-label">📝 Job Description</div>
+          <textarea
+            id="job-desc"
+            class="jd-textarea"
+            placeholder="Paste the full job description here…"
+            aria-label="Job Description"
+          ></textarea>
+        </div>
+
+        <!-- File Upload -->
+        <div class="card">
+          <div class="section-label">📁 Upload Resume</div>
+          <div class="upload-zone" id="upload-zone" role="button" tabindex="0" aria-label="Upload PDF resume">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text">Drag &amp; drop your PDF here</div>
+            <div class="upload-sub">or click to browse</div>
+            <input type="file" id="file-input" accept=".pdf" hidden aria-label="Select PDF file" />
+          </div>
+          <div class="upload-success" id="upload-success" style="display:none;">
+            <span class="success-icon">✅</span>
+            <span class="file-name-text" id="file-name">resume.pdf</span>
+            <button class="remove-btn" id="remove-file" aria-label="Remove uploaded file">✕</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Analysis Tabs -->
+      <div class="tabs-container">
+        <div class="tab-bar" role="tablist" aria-label="Analysis options">
+          <button class="tab-btn active" id="tab-review"   data-tab="review"   role="tab" aria-selected="true"  aria-controls="panel-review">🔍 Review</button>
+          <button class="tab-btn"        id="tab-optimize" data-tab="optimize" role="tab" aria-selected="false" aria-controls="panel-optimize">🚀 Optimize</button>
+          <button class="tab-btn"        id="tab-score"    data-tab="score"    role="tab" aria-selected="false" aria-controls="panel-score">📈 ATS Score</button>
+          <button class="tab-btn"        id="tab-fit"      data-tab="fit"      role="tab" aria-selected="false" aria-controls="panel-fit">🤝 Job Fit</button>
+          <button class="tab-btn"        id="tab-keywords" data-tab="keywords" role="tab" aria-selected="false" aria-controls="panel-keywords">📊 Keywords</button>
+          <button class="tab-btn"        id="tab-design"   data-tab="design"   role="tab" aria-selected="false" aria-controls="panel-design">🎨 Design</button>
+          <button class="tab-btn"        id="tab-translate" data-tab="translate" role="tab" aria-selected="false" aria-controls="panel-translate">🌍 Translate</button>
+        </div>
+
+        <!-- Panel: Review -->
+        <div class="tab-panel active" id="panel-review" role="tabpanel" aria-labelledby="tab-review">
+          <div class="panel-header">
+            <h2 class="panel-title">🔍 Resume Review</h2>
+            <p class="panel-desc">Get a thorough HR-perspective review of your resume against the job description.</p>
+          </div>
+          <button class="analyze-btn" id="btn-review" onclick="analyzeResume('review')">
+            <span class="btn-icon">▶</span> Run Resume Review
+          </button>
+        </div>
+
+        <!-- Panel: Optimize -->
+        <div class="tab-panel" id="panel-optimize" role="tabpanel" aria-labelledby="tab-optimize">
+          <div class="panel-header">
+            <h2 class="panel-title">🚀 Optimization Tips</h2>
+            <p class="panel-desc">Actionable suggestions to make your resume stronger for this role.</p>
+          </div>
+          <button class="analyze-btn" id="btn-optimize" onclick="analyzeResume('optimize')">
+            <span class="btn-icon">▶</span> Generate Optimization Tips
+          </button>
+        </div>
+
+        <!-- Panel: ATS Score -->
+        <div class="tab-panel" id="panel-score" role="tabpanel" aria-labelledby="tab-score">
+          <div class="panel-header">
+            <h2 class="panel-title">📈 ATS Score</h2>
+            <p class="panel-desc">Scored against the job description using RAG-calibrated reference resumes when available.</p>
+          </div>
+          <button class="analyze-btn" id="btn-score" onclick="analyzeResume('score')">
+            <span class="btn-icon">▶</span> Calculate ATS Score
+          </button>
+        </div>
+
+        <!-- Panel: Job Fit -->
+        <div class="tab-panel" id="panel-fit" role="tabpanel" aria-labelledby="tab-fit">
+          <div class="panel-header">
+            <h2 class="panel-title">🤝 Job Fit Score</h2>
+            <p class="panel-desc">How well does your overall profile match this position?</p>
+          </div>
+          <button class="analyze-btn" id="btn-fit" onclick="analyzeResume('fit')">
+            <span class="btn-icon">▶</span> Calculate Job Fit Score
+          </button>
+        </div>
+
+        <!-- Panel: Keywords -->
+        <div class="tab-panel" id="panel-keywords" role="tabpanel" aria-labelledby="tab-keywords">
+          <div class="panel-header">
+            <h2 class="panel-title">📊 Keyword Coverage Analysis</h2>
+            <p class="panel-desc">See exactly which JD keywords appear in your resume and which are missing.</p>
+          </div>
+          <button class="analyze-btn" id="btn-keywords" onclick="analyzeKeywords()">
+            <span class="btn-icon">▶</span> Analyze Keywords
+          </button>
+        </div>
+
+        <!-- Panel: Design -->
+        <div class="tab-panel" id="panel-design" role="tabpanel" aria-labelledby="tab-design">
+          <div class="panel-header">
+            <h2 class="panel-title">🎨 Resume Design Suggestions</h2>
+            <p class="panel-desc">ATS-friendliness score, template recommendations, and formatting tips.</p>
+          </div>
+          <button class="analyze-btn" id="btn-design" onclick="analyzeResume('design')">
+            <span class="btn-icon">▶</span> Analyze Resume Design
+          </button>
+        </div>
+
+        <!-- Panel: Translate -->
+        <div class="tab-panel" id="panel-translate" role="tabpanel" aria-labelledby="tab-translate">
+          <div class="panel-header">
+            <h2 class="panel-title">🌍 Translate Resume</h2>
+            <p class="panel-desc">Get a professional, ATS-friendly translation of your resume.</p>
+          </div>
+          <div class="lang-select-wrap">
+            <label class="lang-label" for="lang-select">Target Language</label>
+            <select id="lang-select" class="lang-select">
+              <option value="French">🇫🇷 French</option>
+              <option value="Spanish">🇪🇸 Spanish</option>
+              <option value="German">🇩🇪 German</option>
+              <option value="Hindi">🇮🇳 Hindi</option>
+              <option value="Marathi">🇮🇳 Marathi</option>
+              <option value="Japanese">🇯🇵 Japanese</option>
+              <option value="Portuguese">🇧🇷 Portuguese</option>
+              <option value="Italian">🇮🇹 Italian</option>
+              <option value="Arabic">🇦🇪 Arabic</option>
+              <option value="Chinese (Simplified)">🇨🇳 Chinese (Simplified)</option>
+            </select>
+          </div>
+          <button class="analyze-btn" id="btn-translate" onclick="analyzeResume('translate')">
+            <span class="btn-icon">▶</span> Translate Resume
+          </button>
+        </div>
+      </div>
+
+      <!-- Results Panel -->
+      <div class="results-panel" id="results-panel" style="display:none;">
+
+        <!-- Loading -->
+        <div class="loading-state" id="loading-state" style="display:none;">
+          <div class="spinner"></div>
+          <div class="loading-text" id="loading-text">Analyzing your resume…</div>
+        </div>
+
+        <!-- RAG Badge -->
+        <div class="rag-badge" id="rag-badge" style="display:none;">
+          ✨ Score calibrated using <strong>Top-3 similar real-world resumes</strong> from the FAISS index.
+        </div>
+
+        <!-- Text Result -->
+        <div class="result-box" id="result-box" style="display:none;"></div>
+
+        <!-- Keywords Result -->
+        <div class="keywords-result" id="keywords-result" style="display:none;">
+          <div class="metrics-row" id="metrics-row"></div>
+          <div class="keywords-grid">
+            <div class="keywords-col">
+              <div class="keywords-col-title matched-title">✅ Matched Keywords</div>
+              <div class="chips-container" id="matched-chips"></div>
+            </div>
+            <div class="keywords-col">
+              <div class="keywords-col-title missing-title">❌ Missing Keywords</div>
+              <div class="chips-container" id="missing-chips"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon">📄</div>
+        <div class="empty-title">No Resume Uploaded Yet</div>
+        <div class="empty-desc">Paste a job description and upload your PDF resume above to start the analysis.</div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
