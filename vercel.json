@@ -1,4 +1,7 @@
 {
+  "buildCommand": "echo 'Static frontend build'",
+  "outputDirectory": ".",
+  "public": ".",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]

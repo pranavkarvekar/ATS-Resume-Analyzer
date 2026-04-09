@@ -1,11 +1,14 @@
 services:
   - type: web
     name: ats-resume-analyzer-api
-    env: python
-    region: oregon
+    runtime: python
     buildCommand: pip install -r api/requirements.txt
     startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/health
     envVars:
       - key: GROQ_API_KEY
         sync: false
+    plan: free
+    # Note: This deploys the FastAPI backend only
+    # Deploy the frontend (index.html, app.js, styles.css) to Vercel instead
+
