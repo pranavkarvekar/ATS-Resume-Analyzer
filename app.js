@@ -8,7 +8,7 @@
 // For local: uses localhost:8000
 // For Vercel: auto-detects from REACT_APP_API_URL env var or uses hardcoded production URL
 const API_BASE = (() => {
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || !window.location.hostname) {
     return 'http://127.0.0.1:8000';
   }
   // For Vercel or any hosted environment, use the same origin, so API requests go to /api points

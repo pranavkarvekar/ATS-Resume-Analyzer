@@ -56,9 +56,9 @@ try:
     if os.path.exists(INDEX_PATH):
         _faiss_index = faiss.read_index(INDEX_PATH)
         _embedder = SentenceTransformer("all-MiniLM-L6-v2")
-        print("✅ RAG pipeline loaded successfully")
+        print("RAG pipeline loaded successfully")
 except Exception as e:
-    print(f"⚠️  RAG pipeline not available: {e}")
+    print(f"RAG pipeline not available: {e}")
 
 # ── Prompts ────────────────────────────────────────────────
 review_prompt = PromptTemplate(
