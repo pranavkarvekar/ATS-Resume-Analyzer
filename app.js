@@ -8,24 +8,11 @@
 // For local: uses localhost:8000
 // For Vercel: auto-detects from REACT_APP_API_URL env var or uses hardcoded production URL
 const API_BASE = (() => {
-  // Check for environment variable first (Vercel deployment)
-  if (typeof process !== 'undefined' && process.env.REACT_APP_API_URL) {
-    return process.env.REACT_APP_API_URL;
-  }
-  
-  // Local development
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    return 'http://localhost:8000';
+    return 'http://127.0.0.1:8000';
   }
-  
-  // Production: detect from current domain or use explicit URL
-  if (window.location.hostname.includes('vercel.app')) {
-    // If frontend and backend are on same Vercel project
-    return `https://${window.location.hostname.replace('www.', '')}`; 
-  }
-  
-  // Fallback: Update this URL to point to your deployed backend API
-  return 'https://ats-api.vercel.app'; // Replace with your actual API URL
+  // For Vercel or any hosted environment, use the same origin, so API requests go to /api points
+  return window.location.origin;
 })();
 
 console.log('🔌 API Base URL:', API_BASE);

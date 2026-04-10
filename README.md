@@ -8,7 +8,7 @@ An intelligent Applicant Tracking System (ATS) resume scanner that uses **RAG (R
 - **FAISS vector search** — fast semantic similarity search using SentenceTransformer embeddings
 - **Groq LLM (Llama 3.3 70B)** — generates detailed ATS scores with strengths, weaknesses, and reasoning
 - **PDF resume parsing** — extracts text from uploaded PDF resumes
-- **Modern UI** — Available in both Streamlit and HTML/CSS/JS versions
+- **Modern UI** — Available in HTML/CSS/JS versions
 - **Pre-built index** — FAISS index is built offline once, so the app starts instantly
 - **Multi-language support** — Translate resumes to 10+ languages
 - **Vercel-ready** — Deploy frontend + backend to Vercel with zero configuration
@@ -17,7 +17,7 @@ An intelligent Applicant Tracking System (ATS) resume scanner that uses **RAG (R
 
 | Component | Technology |
 |-----------|-----------|
-| **Frontend** | Streamlit OR HTML/CSS/JS (PDF.js) |
+| **Frontend** | HTML/CSS/JS (PDF.js) |
 | **Backend API** | FastAPI + LangChain |
 | **LLM** | Groq (Llama 3.3 70B Versatile) |
 | **Embeddings** | SentenceTransformer (all-MiniLM-L6-v2) |
@@ -27,7 +27,7 @@ An intelligent Applicant Tracking System (ATS) resume scanner that uses **RAG (R
 
 ## 🚀 Quick Start
 
-### Option A: Run Locally with Streamlit
+### Option A: Run Locally
 
 ```bash
 # 1. Clone repository
@@ -48,9 +48,6 @@ pip install -r requirements.txt
 
 # 5. Build FAISS index (one-time, ~2 min)
 python build_index.py
-
-# 6. Run Streamlit app
-streamlit run app.py
 ```
 
 Then open http://localhost:8501

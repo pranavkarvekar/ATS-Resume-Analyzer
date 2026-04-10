@@ -1,11 +1,6 @@
 fastapi
 uvicorn[standard]
-pdfplumber
-faiss-cpu
-sentence-transformers
 langchain-groq
 python-dotenv
 langchain-core
 python-multipart
-pandas
-numpy
