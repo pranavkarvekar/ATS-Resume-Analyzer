@@ -1,0 +1,45 @@
+# Replace FAISS Vector DB with VectifyAI PageIndex
+
+This plan outlines the steps required to fulfill your request to swap the FAISS vector database for VectifyAI's `PageIndex` reasoning-based RAG framework. 
+
+> [!CAUTION]
+> **Extreme Cost Warning**: `PageIndex` builds its index using an LLM (not local math like FAISS). Running an LLM to generate a hierarchical tree for 2,484 resumes will consume millions of tokens. If using OpenAI or Anthropic, this single indexing step could cost between $20 - $100+ in API credits and take several hours. FAISS currently does this locally, for free, in under 2 seconds.
+
+> [!WARNING]
+> **Massive Latency Increase**: Since `PageIndex` uses an Agent to *read and reason* through a Table of Contents to find matching resumes instead of doing mathematical nearest-neighbor search, getting an ATS Match Score will go from taking **1-2 seconds** to taking **15-45 seconds** as the agent recursively navigates the tree.
+
+> [!IMPORTANT]
+> **Usecase Mismatch**: `PageIndex` was explicitly designed to index *single, massive documents* (like a 300-page SEC filing). To use it here, we will have to stitch all 2,484 separate resumes into one gigantic Markdown file so the LLM can try to make a "Table of Contents" out of it.
+
+## Proposed Changes
+
+### 1. Dependency Updates
+- **[DELETE]** `faiss-cpu`, `sentence-transformers`, `pandas` (for vector storage)
+- **[NEW]** `litellm`, `openai-agents` (for the PageIndex Agent SDK)
+
+### 2. Restructuring the Dataset
+#### [NEW] `scripts/compile_markdown_db.py`
+We will need a new script that pulls all 2,484 resumes from `Resume.csv` and stitches them into a massive `Master_Resume_DB.md` file formatted as:
+```markdown
+# Information Technology
+## Candidate 1
+Resume text...
+## Candidate 2 
+```
+#### [MODIFY] `build_index.py`
+Instead of embedding text, `build_index.py` will run the `run_pageindex.py` logic over `Master_Resume_DB.md` to trigger the LLM to generate the `PageIndex` tree structure JSON.
+
+### 3. Backend Modification
+#### [MODIFY] `api/index.py`
+- Remove all FAISS and SentenceTransformer imports and logic.
+- Import `PageIndexClient` and set the workspace.
+- Inside the `/api/analyze` (score mode), initialize the OpenAI Agents SDK `query_agent`. 
+- Provide the agent with the uploaded candidate's resume and instruct it to use `get_document_structure()` and `get_page_content()` to browse the `Master_Resume_DB` and evaluate the candidate.
+
+## User Review Required
+
+Because this change fundamentally alters the application's performance, cost, and architecture to fit a tool meant for a different use-case (1 long document vs. 2,400 short documents), **I strongly advise against making this change.**
+
+If you still want to proceed, you will need to provide an `OPENAI_API_KEY` with available billing credits, as indexing this much data will fail on standard free-tier rate limits.
+
+**Do you want to proceed with this implementation?**

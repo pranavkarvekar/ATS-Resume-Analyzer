@@ -1,0 +1,20 @@
+{
+  "name": "ats_data",
+  "version": "1.0.0",
+  "description": "An intelligent Applicant Tracking System (ATS) resume scanner that uses **RAG (Retrieval-Augmented Generation)** with FAISS vector search and Groq LLM to evaluate resumes against job descriptions.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pranavkarvekar/ATS-Resume-Analyzer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pranavkarvekar/ATS-Resume-Analyzer/issues"
+  },
+  "homepage": "https://github.com/pranavkarvekar/ATS-Resume-Analyzer#readme"
+}
